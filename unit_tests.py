@@ -33,10 +33,12 @@ class BoardAndTileTest(unittest.TestCase):
 
         next_tiles = boardoutput["next_tiles"]
 
+        # and one array of integers denoting the possible next tiles.
         for number in next_tiles:
             self.assertIsInstance(number, int)
 
     def test_initialized_board_has_three_of_each_starting_tile(self):
+        # I start the game and initialize the board.
         self.board.board_init()
 
         boardoutput = self.board.read_board()
@@ -47,11 +49,50 @@ class BoardAndTileTest(unittest.TestCase):
             threes += row.count(3)
             zeros += row.count(0)
 
-        # There are three 1s, three 2s, and three 3s to start.
+        # There are three 1s, three 2s, and three 3s to start, and thus 7
+        # zeros remaining.
         self.assertEqual(ones, 3)
         self.assertEqual(twos, 3)
         self.assertEqual(threes, 3)
         self.assertEqual(zeros, 7)
+
+    def test_create_tile_with_default_value(self):
+        # I create a tile object with default value of 0
+        self.test_tile = threesgame.Tile()
+        self.assertEqual(self.test_tile.value, 0)
+
+    def test_create_tile_with_nondefault_value(self):
+        # I create a tile object with value 3 instead of the default 0
+        self.test_tile = threesgame.Tile(value=3)
+        self.assertEqual(self.test_tile.value, 3)
+
+    # def test_send_up_move(self):
+    #     # With the board initialized, I press up on the board, and the tiles
+    #     # all move correctly.
+    #     self.board.board_init(test=True)
+    #     boardoutput = self.board.read_board()
+    #     print(self.board)
+    #     # print(boardoutput["tiles_layout"])
+
+    #     self.expectedboard = threesgame.Board()
+
+    #     # set all values for
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
+    #     self.expectedboard.tiles[0][0].value = 0
 
 
 if __name__ == '__main__':
