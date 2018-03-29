@@ -7,12 +7,56 @@ A clone of the iOS game Threes, to be used in training a neural network.
 from random import randint, seed
 
 
+def can_combine(curr_tile, next_tile):
+    if curr_tile.value == 0 or next_tile.value == 0:
+        return True
+    elif (curr_tile.value == 1 and next_tile.value == 2) or \
+            (curr_tile.value == 2 and next_tile.value == 1):
+        return True
+    elif curr_tile.value == next_tile.value:
+        return True
+    else:
+        return False
+
+
+def coord_is_wall(dir, row, col):
+    # Determine if tile position is a wall if swiping in direction dir
+    if dir == "up":
+        if row == 0:
+            return True
+        else:
+            return False
+    elif dir == "down":
+        if row == 3:
+            return True
+        else:
+            return False
+    elif dir == "left":
+        if col == 0:
+            return True
+        else:
+            return False
+    elif dir == "right":
+        if col == 3:
+            return True
+        else:
+            return False
+
+
 class Tile():
     def __init__(self, value=0):
         self.value = value
 
     def __str__(self):
-        return(str(self.value))
+        return str(self.value)
+
+    def __eq__(self, other):
+        if isinstance(self, other.__class__):
+            return self.value == other.value
+
+    # up, down, left, right - initialize to None.
+    # True/False once board is initiliazed.
+    combinable = [None, None, None, None]
 
 
 class Board():
@@ -23,37 +67,32 @@ class Board():
              [Tile(), Tile(), Tile(), Tile()]]
 
     def __str__(self):
+        """ Represent a board as the values of the tiles
+        # in 4 rows of 4 separated by spaces. """
         output = ''
         for row in self.tiles:
             output += ('  '.join([str(tile.value) for tile in row])) + '\n'
-        return(output)
+        return output
 
     def read_board(self):
+        """ A list of lists containing all the tiles on the board,
+        along with a list of the next possible tiles.
+        """
         output = {}
-        output["tiles_layout"] = [[el.value for el in row]
-                                  for row in self.tiles]
-        output["next_tiles"] = [1, 2, 3]
-        return(output)
+        output["tiles"] = [[el.value for el in row]
+                           for row in self.tiles]
+        output["next"] = [1, 2, 3]
+        return output
 
     def board_init(self, test=False):
+        """ Create a board with 3x each of 
+        1 tiles, 2 tiles, and 3 tiles, with the rest 0 (empty) tiles.
+        """
         if test:
-            self.tiles[0][0].value = 0
-            self.tiles[0][1].value = 0
-            self.tiles[0][2].value = 0
-            self.tiles[0][3].value = 3
-            self.tiles[1][0].value = 1
-            self.tiles[1][1].value = 0
-            self.tiles[1][2].value = 3
-            self.tiles[1][3].value = 2
-            self.tiles[2][0].value = 3
-            self.tiles[2][1].value = 2
-            self.tiles[2][2].value = 1
-            self.tiles[2][3].value = 0
-            self.tiles[3][0].value = 2
-            self.tiles[3][1].value = 1
-            self.tiles[3][2].value = 0
-            self.tiles[3][3].value = 0
-
+            self.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
+                          [Tile(1), Tile(0), Tile(3), Tile(2)],
+                          [Tile(3), Tile(2), Tile(1), Tile(0)],
+                          [Tile(2), Tile(1), Tile(0), Tile(0)]]
         else:
             coords_to_change = []
 
@@ -68,3 +107,34 @@ class Board():
             for coord in coords_to_change:
                 self.tiles[coord[0]][coord[1]].value = initial_values.pop(
                     randint(0, len(initial_values) - 1))
+
+    def swipe(self, dir):
+
+        if dir == "up":
+            rowdelta = -1
+            coldelta = 0
+        elif dir == "down":
+            rowdelta = 1
+            coldelta = 0
+        elif dir == "left":
+            rowdelta = 0
+            coldelta = -1
+        elif dir == "right":
+            rowdelta = 0
+            coldelta = 1
+
+        if dir == "up":
+            for i, row in enumerate(self.tiles):
+                for j, tile in enumerate(row):
+                    # check if current tile is the upper wall
+                    if coord_is_wall(dir, i, j):
+                        continue
+                    # check if the tile above can be combined
+                    # with the current tile
+                    if can_combine(tile, self.tiles[i-1][j]):
+                        # set the above tile to the sum of its current value
+                        # and the current tile's value, then set the current
+                        # tile to 0.
+                        self.tiles[i-1][j] = Tile(tile.value +
+                                                  self.tiles[i-1][j].value)
+                        self.tiles[i][j] = Tile()
