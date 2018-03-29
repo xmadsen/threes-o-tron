@@ -255,9 +255,55 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(1), Tile(3), Tile(2), Tile(0)],
                                     [Tile(3), Tile(3), Tile(0), Tile(0)],
                                     [Tile(3), Tile(0), Tile(0), Tile(0)]]
-        print(self.board)
         self.board.swipe("left")
-        print(self.board)
+        self.assertTrue(boards_match(self.board, self.expectedboard))
+
+    def test_swipe_right_one_tile_not_on_edge(self):
+        # With the board initialized, I press up on the board, and the tiles
+        # all move correctly.
+
+        # Start with just one 1 tile in the middle, see if it moves properly.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(1), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)]]
+
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(1), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)]]
+        self.board.swipe("right")
+        # Check if the 1 tile moved up properly.
+        self.assertTrue(boards_match(self.board, self.expectedboard))
+
+    def test_swipe_right_one_tile_on_edge(self):
+        # With the board initialized, I swipe up on the board, and the tiles
+        # all move correctly.
+
+        # Start with just one 1 tile on the top wall, see if it moves properly.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(1)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)]]
+
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(1)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)]]
+        self.board.swipe("right")
+        # Check if the 1 tile moved up properly.
+        self.assertTrue(boards_match(self.board, self.expectedboard))
+
+    def test_swipe_right_initialized_board(self):
+        self.board.board_init(test=True)
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
+                                    [Tile(0), Tile(1), Tile(3), Tile(2)],
+                                    [Tile(0), Tile(3), Tile(2), Tile(1)],
+                                    [Tile(0), Tile(2), Tile(1), Tile(0)]]
+        self.board.swipe("right")
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
 

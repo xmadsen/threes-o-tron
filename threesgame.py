@@ -168,3 +168,18 @@ class Board():
                         self.tiles[i][j-1] = Tile(tile.value +
                                                   self.tiles[i][j-1].value)
                         self.tiles[i][j] = Tile()
+        elif dir == "right":
+            for i, row in enumerate(self.tiles):
+                for j, tile in enumerate(reversed(row)):
+                    # check if current tile is the upper wall
+                    if coord_is_wall(dir, i, 3-j):
+                        continue
+                    # check if the tile below can be combined
+                    # with the current tile
+                    if can_combine(tile, self.tiles[i][3-j+1]):
+                        # set the above tile to the sum of its current value
+                        # and the current tile's value, then set the current
+                        # tile to 0.
+                        self.tiles[i][3-j+1] = Tile(tile.value +
+                                                    self.tiles[i][3-j+1].value)
+                        self.tiles[i][3-j] = Tile()
