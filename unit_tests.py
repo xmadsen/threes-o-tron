@@ -151,6 +151,67 @@ class BoardAndTileTest(unittest.TestCase):
             self.assertEqual([tile.value for tile in board_row], [
                              tile.value for tile in self.expectedboard.tiles[index]])
 
+    def test_swipe_down_one_tile_not_on_edge(self):
+        # With the board initialized, I press up on the board, and the tiles
+        # all move correctly.
+
+        # Start with just one 1 tile in the middle, see if it moves properly.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(1), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)]]
+
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(1), Tile(0), Tile(0)]]
+        print(self.board)
+        self.board.swipe("down")
+        print(self.board)
+        # Check if the 1 tile moved up properly.
+        for index, board_row in enumerate(self.board.tiles):
+            self.assertEqual([tile.value for tile in board_row], [
+                             tile.value for tile in self.expectedboard.tiles[index]])
+
+    def test_swipe_down_one_tile_on_edge(self):
+        # With the board initialized, I swipe up on the board, and the tiles
+        # all move correctly.
+
+        # Start with just one 1 tile on the top wall, see if it moves properly.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(1), Tile(0), Tile(0)]]
+
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(0), Tile(1), Tile(0), Tile(0)]]
+
+        print(self.board)
+        self.board.swipe("down")
+        print(self.board)
+        # Check if the 1 tile moved up properly.
+        for index, board_row in enumerate(self.board.tiles):
+            self.assertEqual([tile.value for tile in board_row], [
+                             tile.value for tile in self.expectedboard.tiles[index]])
+
+    def test_swipe_down_initialized_board(self):
+        self.board.board_init(test=True)
+        self.expectedboard = Board()
+        self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                                    [Tile(1), Tile(0), Tile(0), Tile(3)],
+                                    [Tile(3), Tile(0), Tile(3), Tile(2)],
+                                    [Tile(2), Tile(3), Tile(1), Tile(0)]]
+        print(self.board)
+        self.board.swipe("down")
+        print(self.board)
+        for index, board_row in enumerate(self.board.tiles):
+            self.assertEqual([tile.value for tile in board_row], [
+                             tile.value for tile in self.expectedboard.tiles[index]])
+
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
