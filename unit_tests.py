@@ -340,5 +340,22 @@ class BoardAndTileTest(unittest.TestCase):
         # Check if a new tile has been generated.
         self.assertTrue(len(non_zero) == 1 and non_zero[0] == 99)
 
+    def test_swipe_down_adds_new_tile_in_correct_spot(self):
+        # With the board initialized, I swipe on the board, and a new tile
+        # is initilalized properly at the opposite edge
+
+        # Start with all zeroes.
+        self.board.tiles = [[Tile(0), Tile(1), Tile(1), Tile(1)],
+                            [Tile(2), Tile(1), Tile(1), Tile(1)],
+                            [Tile(1), Tile(1), Tile(1), Tile(1)],
+                            [Tile(1), Tile(1), Tile(1), Tile(1)]]
+        self.board.swipe("down")
+        non_zero = []
+        for tile in self.board.tiles[0]:
+            if tile.value != 0:
+                non_zero.append(tile.value)
+        # Check if a new tile has been generated.
+        self.assertTrue(len(non_zero) == 4)
+
 if __name__ == '__main__':
     unittest.main(warnings='ignore')

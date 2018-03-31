@@ -13,7 +13,7 @@ def can_combine(curr_tile, next_tile):
     elif (curr_tile.value == 1 and next_tile.value == 2) or \
             (curr_tile.value == 2 and next_tile.value == 1):
         return True
-    elif curr_tile.value == next_tile.value:
+    elif curr_tile.value > 2 and curr_tile.value == next_tile.value:
         return True
     else:
         return False
