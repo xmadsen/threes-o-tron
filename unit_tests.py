@@ -118,7 +118,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
 
-        self.board.swipe("up")
+        self.board.swipe("up", add_new_tile=False)
 
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
@@ -139,7 +139,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
 
-        self.board.swipe("up")
+        self.board.swipe("up", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         # for index, board_row in enumerate(self.board.tiles):
         #     self.assertEqual([tile.value for tile in board_row], [
@@ -154,7 +154,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(3), Tile(2), Tile(1), Tile(0)],
                                     [Tile(2), Tile(1), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("up")
+        self.board.swipe("up", add_new_tile=False)
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
     def test_swipe_down_one_tile_not_on_edge(self):
@@ -173,7 +173,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(1), Tile(0), Tile(0)]]
 
-        self.board.swipe("down")
+        self.board.swipe("down", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -193,7 +193,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(1), Tile(0), Tile(0)]]
 
-        self.board.swipe("down")
+        self.board.swipe("down", add_new_tile=False)
 
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
@@ -206,7 +206,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(3), Tile(0), Tile(2), Tile(3)],
                                     [Tile(2), Tile(3), Tile(1), Tile(0)]]
 
-        self.board.swipe("down")
+        self.board.swipe("down", add_new_tile=False)
 
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -225,7 +225,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(1), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("left")
+        self.board.swipe("left", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -244,7 +244,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(1), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("left")
+        self.board.swipe("left", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -255,7 +255,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(1), Tile(2), Tile(3), Tile(0)],
                                     [Tile(3), Tile(3), Tile(0), Tile(0)],
                                     [Tile(3), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("left")
+        self.board.swipe("left", add_new_tile=False)
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
     def test_swipe_right_one_tile_not_on_edge(self):
@@ -273,7 +273,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(1), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("right")
+        self.board.swipe("right", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -292,7 +292,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(1)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
-        self.board.swipe("right")
+        self.board.swipe("right", add_new_tile=False)
         # Check if the 1 tile moved up properly.
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
@@ -303,7 +303,7 @@ class BoardAndTileTest(unittest.TestCase):
                                     [Tile(0), Tile(1), Tile(2), Tile(3)],
                                     [Tile(0), Tile(3), Tile(2), Tile(1)],
                                     [Tile(0), Tile(2), Tile(1), Tile(0)]]
-        self.board.swipe("right")
+        self.board.swipe("right", add_new_tile=False)
         self.assertTrue(boards_match(self.board, self.expectedboard))
 
     def test_board_knows_max_tile_value_after_swipe(self):
@@ -318,6 +318,57 @@ class BoardAndTileTest(unittest.TestCase):
         self.board.swipe("up")
         newmaxvalue = self.board.max_tile_value
         self.assertEqual(newmaxvalue, 6)
+
+    def test_swipe_down_adds_new_tile(self):
+        # With the board initialized, I swipe on the board, and a new tile
+        # is added properly at the opposite edge
+
+        # Start with all zeroes.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(1), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)],
+                            [Tile(0), Tile(0), Tile(0), Tile(0)]]
+        self.board.swipe("down")
+        non_zero = []
+        for tile in self.board.tiles[0]:
+            if tile.value != 0:
+                non_zero.append(tile.value)
+        # Check if a new tile has been generated.
+        self.assertTrue(len(non_zero) > 0)
+
+    def test_swipe_down_with_illegal_move_doesnt_add_new_tile(self):
+            # Swiping down in an illegal move, a new tile
+            # is NOT added at the opposite edge
+
+            # Start with all zeroes.
+        self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(99)],
+                            [Tile(0), Tile(0), Tile(0), Tile(98)],
+                            [Tile(0), Tile(0), Tile(0), Tile(97)],
+                            [Tile(0), Tile(0), Tile(0), Tile(96)]]
+        self.board.swipe("down")
+        non_zero = []
+        for tile in self.board.tiles[0]:
+            if tile.value != 0:
+                non_zero.append(tile.value)
+        # Check if a new tile has been generated.
+        self.assertTrue(len(non_zero) == 1 and non_zero[0] == 99)
+
+    def test_swipe_down_adds_new_tile_in_correct_spot(self):
+        # With the board initialized, I swipe on the board, and a new tile
+        # is initilalized properly at the opposite edge in the only open slot
+
+        # Start with all zeroes.
+        self.board.tiles = [[Tile(0), Tile(1), Tile(1), Tile(1)],
+                            [Tile(2), Tile(1), Tile(1), Tile(1)],
+                            [Tile(1), Tile(1), Tile(1), Tile(1)],
+                            [Tile(1), Tile(1), Tile(1), Tile(1)]]
+        self.board.swipe("down")
+        non_zero = []
+        for tile in self.board.tiles[0]:
+            if tile.value != 0:
+                non_zero.append(tile.value)
+        # Check if a new tile has been generated.
+        self.assertTrue(len(non_zero) == 4)
 
 
 if __name__ == '__main__':

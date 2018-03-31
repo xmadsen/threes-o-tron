@@ -13,7 +13,7 @@ def can_combine(curr_tile, next_tile):
     elif (curr_tile.value == 1 and next_tile.value == 2) or \
             (curr_tile.value == 2 and next_tile.value == 1):
         return True
-    elif curr_tile.value == next_tile.value:
+    elif curr_tile.value > 2 and curr_tile.value == next_tile.value:
         return True
     else:
         return False
@@ -68,6 +68,8 @@ class Board():
 
     max_tile_value = 0
 
+    possible_new_tiles = [1, 2, 3]
+
     def set_max_tile_value(self):
         self.max_tile_value = max(
             [max([tile.value for tile in row]) for row in self.tiles])
@@ -116,10 +118,13 @@ class Board():
 
         self.set_max_tile_value()
 
-    def swipe(self, dir):
+    def swipe(self, dir, add_new_tile=True):
         """ Given a swipe direction (up/down/left/right),
             move the tiles on the board appropriately.
         """
+
+        did_move = False
+
         if dir == "up":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(row):
@@ -129,6 +134,9 @@ class Board():
                     # check if the tile above can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[i-1][j]):
+                        # check if it's a non-zero move
+                        if tile.value != 0 or self.tiles[i-1][j].value != 0:
+                            did_move = True
                         # set the above tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
@@ -138,13 +146,16 @@ class Board():
         elif dir == "down":
             for i, row in enumerate(reversed(self.tiles)):
                 for j, tile in enumerate(row):
-                    # check if current tile is the bottom wall
+                    # check if current tile is the upper wall
                     if coord_is_wall(dir, 3-i, j):
                         continue
                     # check if the tile below can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[3-i+1][j]):
-                        # set the below tile to the sum of its current value
+                        # check if it's a non-zero move
+                        if tile.value != 0 or self.tiles[3-i+1][j].value != 0:
+                            did_move = True
+                        # set the above tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[3-i+1][j] = Tile(tile.value +
@@ -153,13 +164,16 @@ class Board():
         elif dir == "left":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(row):
-                    # check if current tile is the left wall
+                    # check if current tile is the upper wall
                     if coord_is_wall(dir, i, j):
                         continue
-                    # check if the tile to the left can be combined
+                    # check if the tile below can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[i][j-1]):
-                        # set the left tile to the sum of its current value
+                        # check if it's a non-zero move
+                        if tile.value != 0 or self.tiles[i][j-1].value != 0:
+                            did_move = True
+                        # set the above tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[i][j-1] = Tile(tile.value +
@@ -168,18 +182,57 @@ class Board():
         elif dir == "right":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(reversed(row)):
-                    # check if current tile is the right wall
+                    # check if current tile is the upper wall
                     if coord_is_wall(dir, i, 3-j):
                         continue
-                    # check if the tile to the rigth can be combined
+                    # check if the tile below can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[i][3-j+1]):
-                        # set the right tile to the sum of its current value
+                        # check if it's a non-zero move
+                        if tile.value != 0 or self.tiles[i][3-j+1].value != 0:
+                            did_move = True
+                        # set the above tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[i][3-j+1] = Tile(tile.value +
                                                     self.tiles[i][3-j+1].value)
                         self.tiles[i][3-j] = Tile()
+        else:
+            # illegal move
+            return False
 
         # Determine max_tile_value having swiped.
         self.set_max_tile_value()
+        
+        if did_move and add_new_tile:
+            # Add new tile in
+            self.put_random_new_value(dir)
+
+        # Return whether the swipe had any effect (aka legal move)
+        # Could be potentially useful for learning.
+        return did_move
+
+    def put_random_new_value(self, direction_of_swipe):
+        open_spaces = self.get_open_spaces_on_opposite_edge(direction_of_swipe)
+        coord_for_new_value = open_spaces[randint(0, len(open_spaces) - 1)]
+        new_value = self.possible_new_tiles[randint(0, len(self.possible_new_tiles) - 1)]
+        self.tiles[coord_for_new_value[1]][coord_for_new_value[0]].value = new_value
+
+    def get_open_spaces_on_opposite_edge(self, opposite_edge):
+        open_spaces = []
+        if opposite_edge == "up" or opposite_edge == "down":
+            edge = 0
+            if opposite_edge == "up":
+                edge = 3
+            for index, el in enumerate(self.tiles[edge]):
+                if (el.value == 0):
+                    open_spaces.append([index, edge])
+        else:
+            edge = 0
+            if opposite_edge == "left":
+                edge = 3
+            for index in range(len(self.tiles)):
+                if (self.tiles[index][edge].value == 0):
+                    open_spaces.append([edge, index])
+        return open_spaces
+
