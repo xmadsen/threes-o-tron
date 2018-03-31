@@ -150,8 +150,8 @@ class BoardAndTileTest(unittest.TestCase):
     def test_swipe_up_initialized_board(self):
         self.board.board_init(test=True)
         self.expectedboard = Board()
-        self.expectedboard.tiles = [[Tile(1), Tile(0), Tile(3), Tile(3)],
-                                    [Tile(3), Tile(2), Tile(1), Tile(2)],
+        self.expectedboard.tiles = [[Tile(1), Tile(0), Tile(2), Tile(6)],
+                                    [Tile(3), Tile(2), Tile(1), Tile(0)],
                                     [Tile(2), Tile(1), Tile(0), Tile(0)],
                                     [Tile(0), Tile(0), Tile(0), Tile(0)]]
         self.board.swipe("up")
@@ -203,7 +203,7 @@ class BoardAndTileTest(unittest.TestCase):
         self.expectedboard = Board()
         self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(0)],
                                     [Tile(1), Tile(0), Tile(0), Tile(3)],
-                                    [Tile(3), Tile(0), Tile(3), Tile(2)],
+                                    [Tile(3), Tile(0), Tile(2), Tile(3)],
                                     [Tile(2), Tile(3), Tile(1), Tile(0)]]
 
         self.board.swipe("down")
@@ -252,7 +252,7 @@ class BoardAndTileTest(unittest.TestCase):
         self.board.board_init(test=True)
         self.expectedboard = Board()
         self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(3), Tile(0)],
-                                    [Tile(1), Tile(3), Tile(2), Tile(0)],
+                                    [Tile(1), Tile(2), Tile(3), Tile(0)],
                                     [Tile(3), Tile(3), Tile(0), Tile(0)],
                                     [Tile(3), Tile(0), Tile(0), Tile(0)]]
         self.board.swipe("left")
@@ -300,11 +300,24 @@ class BoardAndTileTest(unittest.TestCase):
         self.board.board_init(test=True)
         self.expectedboard = Board()
         self.expectedboard.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
-                                    [Tile(0), Tile(1), Tile(3), Tile(2)],
+                                    [Tile(0), Tile(1), Tile(2), Tile(3)],
                                     [Tile(0), Tile(3), Tile(2), Tile(1)],
                                     [Tile(0), Tile(2), Tile(1), Tile(0)]]
         self.board.swipe("right")
         self.assertTrue(boards_match(self.board, self.expectedboard))
+
+    def test_board_knows_max_tile_value_after_swipe(self):
+        # I swipe a direction on the board, and the board's
+        # max_tile_value is updated.
+        self.board.board_init(test=True)
+
+        # this should be 3
+        oldmaxvalue = self.board.max_tile_value
+        self.assertEqual(oldmaxvalue, 3)
+
+        self.board.swipe("up")
+        newmaxvalue = self.board.max_tile_value
+        self.assertEqual(newmaxvalue, 6)
 
 
 if __name__ == '__main__':

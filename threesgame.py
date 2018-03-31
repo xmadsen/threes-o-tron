@@ -66,6 +66,12 @@ class Board():
              [Tile(), Tile(), Tile(), Tile()],
              [Tile(), Tile(), Tile(), Tile()]]
 
+    max_tile_value = 0
+
+    def set_max_tile_value(self):
+        self.max_tile_value = max(
+            [max([tile.value for tile in row]) for row in self.tiles])
+
     def __str__(self):
         """ Represent a board as the values of the tiles
         # in 4 rows of 4 separated by spaces. """
@@ -90,7 +96,7 @@ class Board():
         """
         if test:
             self.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
-                          [Tile(1), Tile(0), Tile(3), Tile(2)],
+                          [Tile(1), Tile(0), Tile(2), Tile(3)],
                           [Tile(3), Tile(2), Tile(1), Tile(0)],
                           [Tile(2), Tile(1), Tile(0), Tile(0)]]
         else:
@@ -108,21 +114,12 @@ class Board():
                 self.tiles[coord[0]][coord[1]].value = initial_values.pop(
                     randint(0, len(initial_values) - 1))
 
+        self.set_max_tile_value()
+
     def swipe(self, dir):
-
-        if dir == "up":
-            rowdelta = -1
-            coldelta = 0
-        elif dir == "down":
-            rowdelta = 1
-            coldelta = 0
-        elif dir == "left":
-            rowdelta = 0
-            coldelta = -1
-        elif dir == "right":
-            rowdelta = 0
-            coldelta = 1
-
+        """ Given a swipe direction (up/down/left/right),
+            move the tiles on the board appropriately.
+        """
         if dir == "up":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(row):
@@ -141,13 +138,13 @@ class Board():
         elif dir == "down":
             for i, row in enumerate(reversed(self.tiles)):
                 for j, tile in enumerate(row):
-                    # check if current tile is the upper wall
+                    # check if current tile is the bottom wall
                     if coord_is_wall(dir, 3-i, j):
                         continue
                     # check if the tile below can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[3-i+1][j]):
-                        # set the above tile to the sum of its current value
+                        # set the below tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[3-i+1][j] = Tile(tile.value +
@@ -156,13 +153,13 @@ class Board():
         elif dir == "left":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(row):
-                    # check if current tile is the upper wall
+                    # check if current tile is the left wall
                     if coord_is_wall(dir, i, j):
                         continue
-                    # check if the tile below can be combined
+                    # check if the tile to the left can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[i][j-1]):
-                        # set the above tile to the sum of its current value
+                        # set the left tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[i][j-1] = Tile(tile.value +
@@ -171,15 +168,18 @@ class Board():
         elif dir == "right":
             for i, row in enumerate(self.tiles):
                 for j, tile in enumerate(reversed(row)):
-                    # check if current tile is the upper wall
+                    # check if current tile is the right wall
                     if coord_is_wall(dir, i, 3-j):
                         continue
-                    # check if the tile below can be combined
+                    # check if the tile to the rigth can be combined
                     # with the current tile
                     if can_combine(tile, self.tiles[i][3-j+1]):
-                        # set the above tile to the sum of its current value
+                        # set the right tile to the sum of its current value
                         # and the current tile's value, then set the current
                         # tile to 0.
                         self.tiles[i][3-j+1] = Tile(tile.value +
                                                     self.tiles[i][3-j+1].value)
                         self.tiles[i][3-j] = Tile()
+
+        # Determine max_tile_value having swiped.
+        self.set_max_tile_value()
