@@ -68,6 +68,10 @@ class Board():
 
     max_tile_value = 0
 
+    first = True
+    last = False
+    points = 0
+
     possible_new_tiles = [1, 2, 3]
 
     def set_max_tile_value(self):
@@ -90,12 +94,16 @@ class Board():
         output["tiles"] = [[el.value for el in row]
                            for row in self.tiles]
         output["next"] = [1, 2, 3]
+        output["first"] = self.first
+        output["last"] = self.last
+        output["points"] = self.points
         return output
 
     def board_init(self, test=False):
         """ Create a board with 3x each of 
         1 tiles, 2 tiles, and 3 tiles, with the rest 0 (empty) tiles.
         """
+        self.first = True
         if test:
             self.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
                           [Tile(1), Tile(0), Tile(2), Tile(3)],
@@ -122,6 +130,7 @@ class Board():
         """ Given a swipe direction (up/down/left/right),
             move the tiles on the board appropriately.
         """
+        self.first = False
 
         did_move = False
 
