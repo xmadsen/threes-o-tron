@@ -340,7 +340,7 @@ class BoardAndTileTest(unittest.TestCase):
             # Swiping down in an illegal move, a new tile
             # is NOT added at the opposite edge
 
-            # Start with all zeroes.
+            # Start with a full column
         self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(99)],
                             [Tile(0), Tile(0), Tile(0), Tile(98)],
                             [Tile(0), Tile(0), Tile(0), Tile(97)],
