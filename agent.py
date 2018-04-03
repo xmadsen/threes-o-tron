@@ -12,6 +12,7 @@ ACTION_SPACE = [
 class BasicAgent():
     def __init__(self):
         self.board = Board()
+        self.board.board_init()
         self.qlearn = QLearningTable(actions=ACTION_SPACE)
         self.previous_action = None
         self.previous_state = None
@@ -22,11 +23,12 @@ class BasicAgent():
     def step(self):
         obs = self.board.read_board()
 
-        state = obs["tiles"]
+        # flatten our state into one list 
+        state = [item for sublist in obs["tiles"] for item in sublist]
         score = obs["points"]
         # Give reward based on increased score for that single step
         # I wonder if lower reward values (closer to ~1 range) are better?
-        score_difference = score - self.previous_score
+        score_difference = (score - self.previous_score) / 10
 
         # last step of game
         if obs["last"]:
@@ -38,8 +40,8 @@ class BasicAgent():
                 print("New high score!")
 
             # Give final reward
-            self.qlearn.learn(
-                str(self.previous_state), state, score_difference, 'terminal')
+            self.qlearn.learn(str(self.previous_state), self.previous_action,
+                              score_difference, 'terminal')
             # print(str(self.qlearn.q_table))
 
             # take no action
@@ -53,20 +55,61 @@ class BasicAgent():
             self.game_count += 1
 
         if self.previous_state:
-            self.qlearn.learn(
-                str(self.previous_state), state, score_difference, str(state))
+            self.qlearn.learn(str(self.previous_state), self.previous_action,
+                              score_difference, str(state))
 
         action = self.qlearn.choose_action(str(state))
 
         # for now it just picks a random action 0-3
-        print(action)
+        self.board.swipe(action)
         # take action and loop step
 
         self.previous_state = state
         self.previous_action = action
         self.previous_score = score
 
+
 agent = BasicAgent()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
+agent.step()
 agent.step()
 agent.step()
 agent.step()

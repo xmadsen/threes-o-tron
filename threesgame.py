@@ -70,7 +70,6 @@ class Board():
 
     first = True
     last = False
-    points = 0
 
     possible_new_tiles = [1, 2, 3]
 
@@ -96,7 +95,7 @@ class Board():
         output["next"] = [1, 2, 3]
         output["first"] = self.first
         output["last"] = self.last
-        output["points"] = self.points
+        output["points"] = self.getCurrentPoints()
         return output
 
     def board_init(self, test=False):
@@ -125,6 +124,16 @@ class Board():
                     randint(0, len(initial_values) - 1))
 
         self.set_max_tile_value()
+
+    def getCurrentPoints(self):
+        # NOT FINAL IMPLEMENTATION
+        # JUST ADDS EVERYTHING TOGETHER FOR NOW
+        points = 0
+        for row in self.tiles:
+            for tile in row:
+                if tile.value > 2:
+                    points += tile.value
+        return points
 
     def swipe(self, dir, add_new_tile=True):
         """ Given a swipe direction (up/down/left/right),
