@@ -95,7 +95,7 @@ class Board():
         output["next"] = [1, 2, 3]
         output["first"] = self.first
         output["last"] = self.last
-        output["points"] = self.getCurrentPoints()
+        output["points"] = self.get_current_points()
         return output
 
     def board_init(self, test=False):
@@ -103,12 +103,18 @@ class Board():
         1 tiles, 2 tiles, and 3 tiles, with the rest 0 (empty) tiles.
         """
         self.first = True
+        self.last = False
         if test:
             self.tiles = [[Tile(0), Tile(0), Tile(0), Tile(3)],
                           [Tile(1), Tile(0), Tile(2), Tile(3)],
                           [Tile(3), Tile(2), Tile(1), Tile(0)],
                           [Tile(2), Tile(1), Tile(0), Tile(0)]]
         else:
+            # reset all to 0
+            for row in self.tiles:
+                for tile in row:
+                    tile.value = 0
+
             coords_to_change = []
 
             # Pick 9 tiles to be initialized with nonzero values
@@ -125,15 +131,50 @@ class Board():
 
         self.set_max_tile_value()
 
-    def getCurrentPoints(self):
-        # NOT FINAL IMPLEMENTATION
-        # JUST ADDS EVERYTHING TOGETHER FOR NOW
+    def get_current_points(self):
         points = 0
         for row in self.tiles:
             for tile in row:
                 if tile.value > 2:
-                    points += tile.value
+                    exponent = 1
+                    value = tile.value
+                    while value > 3:
+                        exponent += 1
+                        value /= 2
+                    points += 3 ** exponent
         return points
+
+    def has_lost(self):
+        # up
+        for i, row in enumerate(self.tiles):
+            for j, tile in enumerate(row):
+                if coord_is_wall("up", i, j):
+                    continue
+                if can_combine(tile, self.tiles[i-1][j]):
+                    return False
+        # down
+        for i, row in enumerate(reversed(self.tiles)):
+            for j, tile in enumerate(row):
+                if coord_is_wall("down", 3-i, j):
+                    continue
+                if can_combine(tile, self.tiles[3-i+1][j]):
+                    return False
+        # left
+        for i, row in enumerate(self.tiles):
+            for j, tile in enumerate(row):
+                if coord_is_wall("left", i, j):
+                    continue
+                if can_combine(tile, self.tiles[i][j-1]):
+                    return False
+        # right
+        for i, row in enumerate(self.tiles):
+            for j, tile in enumerate(reversed(row)):
+                if coord_is_wall("right", i, 3-j):
+                    continue
+                if can_combine(tile, self.tiles[i][3-j+1]):
+                    return False
+        return True
+        
 
     def swipe(self, dir, add_new_tile=True):
         """ Given a swipe direction (up/down/left/right),
@@ -225,6 +266,8 @@ class Board():
         if did_move and add_new_tile:
             # Add new tile in
             self.put_random_new_value(dir)
+
+        self.last = self.has_lost()
 
         # Return whether the swipe had any effect (aka legal move)
         # Could be potentially useful for learning.
