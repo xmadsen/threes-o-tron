@@ -12,59 +12,63 @@ ACTION_SPACE = [
 class BasicAgent():
     def __init__(self):
         self.board = Board()
-        self.qlearn = QLearningTable(actions=list(range(len(ACTION_SPACE))))
+        self.qlearn = QLearningTable(actions=ACTION_SPACE)
         self.previous_action = None
         self.previous_state = None
+        self.previous_score = 0
+        self.game_count = 0
         self.max_points = 0
-        self.memory = Memory()
         
     def step(self):
         obs = self.board.read_board()
 
-        if obs["first"]:
-            # first step stuff
-            self.previous_action = None
-
-        if obs["last"]:
-            reward = 0
-            if obs["points"] > self.max_points:
-                # add reward
-                # ...
-                # and then
-                self.max_points = obs["points"]
-
-            # q learning at the end of the game
-            # reset game
-
-        if self.previous_action is not None:
-            self.memory.push(self.previous_state, self.previous_action)
-
         state = obs["tiles"]
+        score = obs["points"]
+        # Give reward based on increased score for that single step
+        # I wonder if lower reward values (closer to ~1 range) are better?
+        score_difference = score - self.previous_score
+
+        # last step of game
+        if obs["last"]:
+
+            print("Game", self.game_count, "ended with a score of", obs["points"])
+            print("High score is", self.max_points)
+            if obs["points"] > self.max_points:
+                self.max_points = obs["points"]
+                print("New high score!")
+
+            # Give final reward
+            self.qlearn.learn(
+                str(self.previous_state), state, score_difference, 'terminal')
+            # print(str(self.qlearn.q_table))
+
+            # take no action
+            return
+
+        # if first step of game
+        if obs["first"]:
+            self.previous_state = None
+            self.previous_action = None
+            self.previous_score = 0
+            self.game_count += 1
+
+        if self.previous_state:
+            self.qlearn.learn(
+                str(self.previous_state), state, score_difference, str(state))
 
         action = self.qlearn.choose_action(str(state))
 
         # for now it just picks a random action 0-3
         print(action)
+        # take action and loop step
 
         self.previous_state = state
         self.previous_action = action
-            
-
-class Memory:
-    def __init__(self, max_size=300000):
-        self.max_size = max_size
-        self.reset()
-
-    def reset(self):
-        self.buffer = deque(maxlen=self.max_size)
-
-    def push(self, state, action):
-        self.buffer.append((str(state), action))
-
-    def pop(self):
-        if self.buffer:
-            return self.buffer.pop()
-
+        self.previous_score = score
 
 agent = BasicAgent()
 agent.step()
+agent.step()
+agent.step()
+agent.step()
+print(str(agent.qlearn.q_table))
