@@ -9,6 +9,7 @@ ACTION_SPACE = [
     'right',
 ]
 
+
 class BasicAgent():
     def __init__(self):
         self.board = Board()
@@ -20,11 +21,11 @@ class BasicAgent():
         self.previous_score = 0
         self.game_count = 0
         self.max_points = 0
-        
+
     def step(self):
         obs = self.board.read_board()
 
-        # flatten our state into one list 
+        # flatten our state into one list
         state = [item for sublist in obs["tiles"] for item in sublist]
         score = obs["points"]
         # Give reward based on increased score for that single step
@@ -36,7 +37,8 @@ class BasicAgent():
 
             final_point_total = obs["points"]
 
-            print("Game", self.game_count, "ended with a score of", final_point_total)
+            # print("Game", self.game_count,
+            #      "ended with a score of", final_point_total)
             if final_point_total > self.max_points:
                 print("New high score! Previous max was", self.max_points)
                 self.max_points = final_point_total
@@ -64,13 +66,15 @@ class BasicAgent():
             self.previous_score = 0
 
             # take no action
-            return
+            return final_point_total
 
         if obs["first"]:
             self.game_count += 1
+            # return self.previous_score
 
         else:
-            self.memory.push(self.previous_state, self.previous_action, score_difference)
+            self.memory.push(self.previous_state,
+                             self.previous_action, score_difference)
             # self.qlearn.learn(str(self.previous_state), self.previous_action,
             #                   score_difference, str(state))
 
@@ -106,7 +110,7 @@ class Memory:
             return self.buffer.pop()
 
 
-agent = BasicAgent()
+# agent = BasicAgent()
 
-while True:
-    agent.step()
+# while True:
+#    agent.step()
