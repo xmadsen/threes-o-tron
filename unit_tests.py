@@ -1,5 +1,5 @@
 import unittest
-from threesgame import Board, Tile, can_combine
+from threesgame import Board, Tile, can_combine, get_possible_tiles
 
 
 def boards_match(board, expectedboard):
@@ -319,6 +319,21 @@ class BoardAndTileTest(unittest.TestCase):
         newmaxvalue = self.board.max_tile_value
         self.assertEqual(newmaxvalue, 6)
 
+    def test_board_next_tiles_varies_by_max_tile(self):
+        self.board.board_init()
+        self.board.tiles = [[Tile(3), Tile(2), Tile(3), Tile(12)],
+                            [Tile(768), Tile(768), Tile(12), Tile(48)],
+                            [Tile(12), Tile(6), Tile(96), Tile(48)],
+                            [Tile(3), Tile(24), Tile(1), Tile(3)]]
+        self.board.set_max_tile_value()
+        self.board.possible_new_tiles = get_possible_tiles(
+            self.board.max_tile_value)
+        self.assertEqual(self.board.possible_new_tiles,
+                         [1, 2, 3, [96, 48, 24]])
+        self.board.swipe("left")
+        self.assertEqual(self.board.possible_new_tiles,
+                         [1, 2, 3, [192, 96, 48]])
+
     def test_swipe_down_adds_new_tile(self):
         # With the board initialized, I swipe on the board, and a new tile
         # is added properly at the opposite edge
@@ -337,10 +352,10 @@ class BoardAndTileTest(unittest.TestCase):
         self.assertTrue(len(non_zero) > 0)
 
     def test_swipe_down_with_illegal_move_doesnt_add_new_tile(self):
-            # Swiping down in an illegal move, a new tile
-            # is NOT added at the opposite edge
+        # Swiping down in an illegal move, a new tile
+        # is NOT added at the opposite edge
 
-            # Start with a full column
+        # Start with a full column
         self.board.tiles = [[Tile(0), Tile(0), Tile(0), Tile(99)],
                             [Tile(0), Tile(0), Tile(0), Tile(98)],
                             [Tile(0), Tile(0), Tile(0), Tile(97)],
@@ -369,6 +384,21 @@ class BoardAndTileTest(unittest.TestCase):
                 non_zero.append(tile.value)
         # Check if a new tile has been generated.
         self.assertTrue(len(non_zero) == 4)
+
+    def test_game_score_is_accurate(self):
+        self.board.tiles = [[Tile(2), Tile(6), Tile(12), Tile(2)],
+                            [Tile(3), Tile(48), Tile(24), Tile(6)],
+                            [Tile(48), Tile(24), Tile(384), Tile(768)],
+                            [Tile(1), Tile(3), Tile(1), Tile(24)]]
+
+        self.assertEqual(self.board.read_board()["points"], 27024)
+
+        self.board.tiles = [[Tile(3), Tile(2), Tile(3), Tile(12)],
+                            [Tile(1536), Tile(12), Tile(48), Tile(24)],
+                            [Tile(12), Tile(6), Tile(96), Tile(48)],
+                            [Tile(3), Tile(24), Tile(1), Tile(3)]]
+
+        self.assertEqual(self.board.read_board()["points"], 60528)
 
 
 if __name__ == '__main__':

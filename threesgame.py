@@ -4,7 +4,7 @@ Xander Madsen - March 2018
 A clone of the iOS game Threes, to be used in training a neural network.
 """
 
-from random import randint, seed
+from random import randint, seed, choice
 
 
 def can_combine(curr_tile, next_tile):
@@ -43,6 +43,14 @@ def coord_is_wall(dir, row, col):
             return False
 
 
+def get_possible_tiles(max_tile):
+    possibilities = [1, 2, 3]
+    if max_tile >= 48:
+        possibilities.append([max_tile / 8, max_tile / 16, max_tile / 32])
+
+    return possibilities
+
+
 class Tile():
     def __init__(self, value=0):
         self.value = value
@@ -71,7 +79,7 @@ class Board():
     first = True
     last = False
 
-    possible_new_tiles = [1, 2, 3]
+    possible_new_tiles = [1, 2, 3]  # always 1,2,3 to start with
 
     def set_max_tile_value(self):
         self.max_tile_value = max(
@@ -92,7 +100,7 @@ class Board():
         output = {}
         output["tiles"] = [[el.value for el in row]
                            for row in self.tiles]
-        output["next"] = [1, 2, 3]
+        output["next"] = self.possible_new_tiles
         output["first"] = self.first
         output["last"] = self.last
         output["points"] = self.get_current_points()
@@ -130,6 +138,7 @@ class Board():
                     randint(0, len(initial_values) - 1))
 
         self.set_max_tile_value()
+        self.possible_new_tiles = get_possible_tiles(self.max_tile_value)
 
     def get_current_points(self):
         points = 0
@@ -174,7 +183,6 @@ class Board():
                 if can_combine(tile, self.tiles[i][3-j+1]):
                     return False
         return True
-        
 
     def swipe(self, dir, add_new_tile=True):
         """ Given a swipe direction (up/down/left/right),
@@ -260,9 +268,10 @@ class Board():
             # illegal move
             return False
 
-        # Determine max_tile_value having swiped.
+        # Determine max_tile_value having swiped, and update possible_next_tiles
         self.set_max_tile_value()
-        
+        self.possible_new_tiles = get_possible_tiles(self.max_tile_value)
+
         if did_move and add_new_tile:
             # Add new tile in
             self.put_random_new_value(dir)
@@ -275,9 +284,12 @@ class Board():
 
     def put_random_new_value(self, direction_of_swipe):
         open_spaces = self.get_open_spaces_on_opposite_edge(direction_of_swipe)
-        coord_for_new_value = open_spaces[randint(0, len(open_spaces) - 1)]
-        new_value = self.possible_new_tiles[randint(0, len(self.possible_new_tiles) - 1)]
-        self.tiles[coord_for_new_value[1]][coord_for_new_value[0]].value = new_value
+        # open_spaces[randint(0, len(open_spaces) - 1)]
+        coord_for_new_value = choice(open_spaces)
+        new_value = self.possible_new_tiles[randint(
+            0, len(self.possible_new_tiles) - 1)]
+        self.tiles[coord_for_new_value[1]
+                   ][coord_for_new_value[0]].value = new_value
 
     def get_open_spaces_on_opposite_edge(self, opposite_edge):
         open_spaces = []
@@ -296,4 +308,3 @@ class Board():
                 if (self.tiles[index][edge].value == 0):
                     open_spaces.append([edge, index])
         return open_spaces
-
