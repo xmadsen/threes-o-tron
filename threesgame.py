@@ -62,10 +62,6 @@ class Tile():
         if isinstance(self, other.__class__):
             return self.value == other.value
 
-    # up, down, left, right - initialize to None.
-    # True/False once board is initiliazed.
-    combinable = [None, None, None, None]
-
 
 class Board():
 
@@ -286,8 +282,9 @@ class Board():
         open_spaces = self.get_open_spaces_on_opposite_edge(direction_of_swipe)
         # open_spaces[randint(0, len(open_spaces) - 1)]
         coord_for_new_value = choice(open_spaces)
-        new_value = self.possible_new_tiles[randint(
-            0, len(self.possible_new_tiles) - 1)]
+        new_value = choice(self.possible_new_tiles)
+        if type(new_value) == list:
+            new_value = choice(new_value)
         self.tiles[coord_for_new_value[1]
                    ][coord_for_new_value[0]].value = new_value
 
