@@ -347,7 +347,7 @@ class BoardAndTileTest(unittest.TestCase):
         non_zero = []
         for tile in self.board.tiles[0]:
             if tile.value != 0:
-                non_zero.append(tile.value)
+                non_zero.append(tile.value)3
         # Check if a new tile has been generated.
         self.assertTrue(len(non_zero) > 0)
 

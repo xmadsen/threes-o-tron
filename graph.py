@@ -11,6 +11,7 @@ def run_agent(sampling_rate=5):
         times = []
         highscores = []
         scores = []
+        state_count = []
         games_rate = []
 
         while True:
@@ -18,6 +19,7 @@ def run_agent(sampling_rate=5):
             if type(score) == int:
                 times.append(time() - start_time)
                 highscores.append(agent.max_points)
+                state_count.append(agent.states_seen)
                 scores.append(score)
 
             game_count = agent.game_count
@@ -34,15 +36,21 @@ def run_agent(sampling_rate=5):
                 last_time = time()
 
     except KeyboardInterrupt:
-        print(times)
-        print(scores)
+        # Graph the high scores and individual game scores over time
         plt.clf()
-        plt.plot(times, scores, 'bo', label="score")
-        plt.plot(times, highscores, 'r-',
-                 alpha=0.5, label="high score")
+        plt.subplot(211)
         plt.legend(loc="upper left")
         plt.xlabel("Time (seconds)")
         plt.ylabel("Game score")
+        plt.plot(times, scores, 'bo', label="score")
+        plt.plot(times, highscores, 'r-',
+                 alpha=0.75, label="high score")
+        plt.subplot(212)
+        plt.plot(times, state_count, 'g-',
+                 alpha=0.75, label="state count")
+        plt.legend(loc="upper left")
+        plt.xlabel("Time (seconds)")
+        plt.ylabel("Number of states")
         plt.show()
 
 

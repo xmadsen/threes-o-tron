@@ -19,6 +19,7 @@ class BasicAgent():
         self.previous_action = None
         self.previous_state = None
         self.previous_score = 0
+        self.states_seen = 0
         self.game_count = 0
         self.max_points = 0
 
@@ -64,7 +65,7 @@ class BasicAgent():
             self.previous_state = None
             self.previous_action = None
             self.previous_score = 0
-
+            self.states_seen = len(self.qlearn.q_table.index)
             # take no action
             return final_point_total
 
